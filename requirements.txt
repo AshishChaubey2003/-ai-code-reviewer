@@ -10,3 +10,4 @@ streamlit
 python-dotenv
 pypdf2
 transformers
+langgraph>=0.2.0
