@@ -1,8 +1,9 @@
-# 🔍 AI Code Reviewer
+# ⚡ AI Code Reviewer
 
-> An intelligent code review assistant powered by Groq (Llama 3 70B), LangChain, RAG, and FAISS — built for developers who want instant, expert-level feedback on their Python code.
+> An agentic Python code review assistant powered by **Groq (Llama 3 70B)**, **LangGraph**, **LangChain**, **RAG**, and **FAISS** — get instant bug detection, auto-fixes, security audits, and performance feedback on your Python code.
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://python.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Agent_Pipeline-blueviolet)](https://github.com/langchain-ai/langgraph)
 [![LangChain](https://img.shields.io/badge/LangChain-latest-green)](https://langchain.com)
 [![Groq](https://img.shields.io/badge/Groq-Llama3_70B-orange)](https://groq.com)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Cloud-red)](https://streamlit.io)
@@ -10,57 +11,79 @@
 ---
 
 ## 🚀 Live Demo
-👉 **[Click here to try it live](#)** ← (Streamlit Cloud link yahan daalna)
+
+👉 **[Click here to try it live](#)** ← *(Streamlit Cloud link)*
 
 ---
 
 ## 📌 What It Does
 
-AI Code Reviewer analyzes your Python code and provides:
+AI Code Reviewer uses a **5-node LangGraph agentic pipeline** to deeply analyze your Python code:
 
-- 🐛 **Bug Detection** — Finds errors and logical issues
-- 🔐 **Security Audit** — Identifies vulnerabilities
-- ⚡ **Performance Review** — Suggests optimizations
-- 📖 **Best Practices** — PEP8 and clean code tips
-- ✅ **Improved Code** — Gives a refactored version
-- 📚 **RAG-Powered** — Upload your own coding guidelines for personalized review
+| Feature | Description |
+|---|---|
+| 🐛 **Bug Detection** | Finds errors and logical issues with severity scoring |
+| 🔁 **Auto-Fix Loop** | Automatically fixes bugs and re-analyzes (up to 3 attempts) |
+| 🔐 **Security Audit** | Checks for OWASP Top 10 — SQL injection, hardcoded secrets, eval/exec abuse, path traversal, and more |
+| ⚡ **Performance Review** | Detects bottlenecks, missing caching, unnecessary loops |
+| 📖 **Code Quality** | PEP8 violations, naming conventions, error handling, duplication |
+| 📚 **RAG-Powered** | Upload your own PDF coding guidelines for personalized review |
+| 📊 **Scored Report** | Bug, Security, and Quality scores (0–10) with a full downloadable report |
+
+---
+
+## 🧠 Agent Architecture
+
+The core of this project is a **LangGraph state machine** with a conditional auto-fix loop:
+
+```
+User Code + (Optional PDF Guidelines)
+            │
+            ▼
+    ┌─── ANALYZE BUGS ◄────────────────────┐
+    │         │                            │
+    │    bugs found?                       │
+    │    ┌────┴─────┐                      │
+    │  YES (& attempts < 3)   NO           │
+    │    ▼                    │            │
+    │  AUTO-FIX ──────────────┘ (loop)     │
+    └──────────────────────────────────────┘
+                 │
+                 ▼
+          SECURITY AUDIT
+                 │
+                 ▼
+         QUALITY REVIEW
+                 │
+                 ▼
+        GENERATE REPORT
+```
+
+### The 5 Nodes
+
+| Node | Role |
+|---|---|
+| `analyze_bugs_node` | Detects bugs + assigns severity score (0–10) |
+| `auto_fix_node` | Rewrites buggy code, increments fix attempt counter |
+| `security_node` | OWASP Top 10 audit + security score |
+| `quality_node` | Performance, PEP8, naming, error handling review |
+| `report_node` | Assembles final markdown report with all scores |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose | Why I Chose It |
-|---|---|---|
-| **Python** | Core language | Industry standard for AI/backend |
-| **Groq API** | LLM inference | 10x faster than GPU, free tier available |
-| **Llama 3 70B** | AI Model | Open-source SOTA, no vendor lock-in |
-| **LangChain** | Orchestration | Clean prompt management + RAG pipeline |
-| **FAISS** | Vector Database | Meta's production-grade, no external service needed |
-| **HuggingFace Embeddings** | Text → Vector | Free, no API key required |
-| **Streamlit** | UI Framework | Rapid AI app development |
-| **Streamlit Cloud** | Deployment | Auto CI/CD via GitHub push |
-| **PyPDF2** | PDF Parser | Upload coding guidelines/docs |
-| **python-dotenv** | Security | Safe API key management |
-
----
-
-## 🧠 Architecture
-
-```
-User Input (Code + Optional PDF Guidelines)
-            ↓
-    PDF → PyPDF2 → Text Chunks
-            ↓
-    HuggingFace Embeddings → FAISS Vector Store
-            ↓
-    RAG Pipeline (Similarity Search)
-            ↓
-    LangChain Prompt Template
-            ↓
-    Groq API (Llama 3 70B) — Ultra Fast Inference
-            ↓
-    Structured Code Review Output
-```
+| Technology | Purpose |
+|---|---|
+| **Groq API** | Ultra-fast LLM inference (LPU hardware) |
+| **Llama 3 70B** | Open-source state-of-the-art model |
+| **LangGraph** | Agentic pipeline with conditional loops |
+| **LangChain** | Prompt management and chain orchestration |
+| **FAISS** | Local vector database for RAG |
+| **HuggingFace Embeddings** | `all-MiniLM-L6-v2` — free, no API key needed |
+| **Streamlit** | UI with dark/light theme toggle |
+| **PyPDF** | PDF ingestion for RAG knowledge base |
+| **python-dotenv** | Secure API key management |
 
 ---
 
@@ -68,15 +91,15 @@ User Input (Code + Optional PDF Guidelines)
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/AshishChaubey2003/ai-code-reviewer.git
-cd ai-code-reviewer
+git clone https://github.com/AshishChaubey2003/-ai-code-reviewer.git
+cd -ai-code-reviewer
 ```
 
 ### 2. Create virtual environment
 ```bash
 python -m venv venv
-venv\Scripts\activate      # Windows
-source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac/Linux
 ```
 
 ### 3. Install dependencies
@@ -84,12 +107,12 @@ source venv/bin/activate   # Mac/Linux
 pip install -r requirements.txt
 ```
 
-### 4. Setup environment variables
-```bash
-# Create .env file
+### 4. Set up environment variables
+Create a `.env` file in the root directory:
+```
 GROQ_API_KEY=your_groq_api_key_here
 ```
-Get your free Groq API key → https://console.groq.com
+Get your free Groq API key → [console.groq.com](https://console.groq.com)
 
 ### 5. Run the app
 ```bash
@@ -98,30 +121,47 @@ streamlit run app.py
 
 ---
 
+## ☁️ Deploy on Streamlit Cloud
+
+1. Push this repo to GitHub
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
+3. Select your repo, branch `main`, main file `app.py`
+4. Add your secret: **Settings → Secrets**
+   ```
+   GROQ_API_KEY = "your_groq_api_key_here"
+   ```
+5. Click **Deploy** — done!
+
+---
+
 ## 📁 Project Structure
 
 ```
 ai-code-reviewer/
-├── app.py              # Streamlit UI (Dark/Light theme toggle)
-├── reviewer.py         # Groq + LangChain review logic
-├── rag_pipeline.py     # FAISS + RAG setup
-├── embeddings.py       # HuggingFace embeddings
-├── requirements.txt    # Dependencies
+├── app.py              # Streamlit UI — dark/light theme, layout, controls
+├── agent_graph.py      # LangGraph pipeline — nodes, edges, fix loop logic
+├── agent_nodes.py      # 5 agent nodes — analyze, fix, security, quality, report
+├── agent_state.py      # TypedDict state shared across all nodes
+├── reviewer.py         # Simple single-pass reviewer (legacy)
+├── rag_pipeline.py     # FAISS vector store + similarity search
+├── embeddings.py       # HuggingFace embeddings config
+├── requirements.txt    # All dependencies
 ├── .env                # API keys (not committed)
-├── .gitignore
 └── README.md
 ```
 
 ---
 
-## ✨ Key Features
+## ✨ UI Features
 
-- 🌙☀️ **Dark/Light theme toggle**
-- 📁 **Upload .py file** or paste code directly
-- 📚 **RAG support** — upload PDF coding guidelines
-- 💾 **Download review** as text file
-- 📊 **Review stats** — track how many reviews done
-- ⚡ **Ultra fast** — Groq LPU inference
+- 🌙☀️ **Dark / Light theme toggle**
+- ✏️ **Paste code** or **upload a `.py` file**
+- 📚 **Upload PDF guidelines** to build a RAG knowledge base
+- 🔍 **Agent execution trace** — see which nodes ran and how many fix loops occurred
+- 📊 **Score cards** — Bug Severity, Security, Quality scores at a glance
+- 💾 **Download report** as `.txt`
+- ⬇️ **Download fixed code** as `.py`
+- 📈 **Session review counter**
 
 ---
 
@@ -129,11 +169,8 @@ ai-code-reviewer/
 
 **Ashish Kumar Chaubey**
 - GitHub → [AshishChaubey2003](https://github.com/AshishChaubey2003)
-- LinkedIn → [Your LinkedIn](#)
+- LinkedIn → *(https://www.linkedin.com/in/ashishchaubey2dec/)*
 
 ---
 
-## 📌 Note
-
-> Built as part of my GenAI learning journey — exploring LangChain, RAG, and production-grade AI app development. 🚀# -ai-code-reviewer
-AI-powered Python code reviewer using Groq (Llama 3), LangChain, RAG &amp; FAISS — get instant bug detection, security audit &amp; code improvements with your own documentation context.
+> Built as part of my GenAI learning journey — exploring LangGraph agents, RAG pipelines, and production-grade AI app development. 🚀
