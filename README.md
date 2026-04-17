@@ -12,7 +12,7 @@
 
 ## 🚀 Live Demo
 
-👉 **[Click here to try it live](#)** ← *(Streamlit Cloud link)*
+👉 **[Click here to try it live](#)** ← *(https://aujd96shly6j3xw4w2otw7.streamlit.app/)*
 
 ---
 
